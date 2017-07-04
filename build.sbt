@@ -8,12 +8,5 @@ lazy val root = project
   .settings(libraryDependencies ++= Seq(
     %%("akka-actor")
   ) ++ commonDeps ++ freestyleCoreDeps())
-  .aggregate(`serverJS`, `serverJVM`)
 
-lazy val `server` = crossProject
-  .in(file("server"))
-  .settings(moduleName := "server")
-  .jsSettings(sharedJsSettings: _*)
 
-lazy val `serverJVM` = `server`.jvm
-lazy val `serverJS`  = `server`.js

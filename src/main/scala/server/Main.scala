@@ -1,22 +1,14 @@
 
 package server
 
-import cats.implicits._
-
-import freestyle._
-import freestyle.implicits._
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Await
-
-import algebra._
-import algebra.implicits._
 
 object Main extends App {
 
-  def program[F[_]: AlgebraM]: FreeS[F, String] =
-    AlgebraM[F].hello
-
-  println(Await.result(program[AlgebraM.Op].interpret[Future], Duration.Inf))
+  import akka.actor.{ Address, AddressFromURIString }
+  import akka.remote.routing.RemoteRouterConfig
+  val addresses = Seq(
+    Address("akka.tcp", "remotesys", "otherhost", 1234),
+    AddressFromURIString("akka.tcp://othersys@anotherhost:1234"))
+  val routerRemote = system.actorOf(
+    RemoteRouterConfig(RoundRobinPool(5), addresses).props(Props[Echo]))
 }
