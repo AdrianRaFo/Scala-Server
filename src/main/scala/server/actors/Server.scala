@@ -3,7 +3,7 @@
  */
 package server.actors
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging}
 import akka.io.{IO, Tcp}
 import java.net.InetSocketAddress
 
@@ -25,9 +25,14 @@ class Server extends Actor with ActorLogging {
 
     case c @ Connected(remote, local) =>
       log.info(s"Connected to $remote  $local")
-      val handler    = context.actorOf(Props[ReplyHandler])
       val connection = sender()
-      connection ! Register(handler)
+      connection ! Register(self)
+      context become {
+        case Received(data) =>
+          log.info(s"Received ${data.utf8String}")
+          connection ! Write(data)
+        case PeerClosed     => context stop self
+      }
   }
 
 }
