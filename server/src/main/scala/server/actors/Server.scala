@@ -1,7 +1,7 @@
 /**
  * https://github.com/AdrianRaFo
  */
-package server.actors
+package main.scala.server.actors
 
 import akka.actor.{Actor, ActorLogging}
 import akka.io.{IO, Tcp}

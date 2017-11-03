@@ -1,7 +1,7 @@
 /**
  * https://github.com/AdrianRaFo
  */
-package server
+package main.scala.server
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import scala.io.StdIn
