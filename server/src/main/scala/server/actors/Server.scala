@@ -1,9 +1,9 @@
 /**
  * https://github.com/AdrianRaFo
  */
-package main.scala.server.actors
+package server.actors
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.io.{IO, Tcp}
 import java.net.InetSocketAddress
 
@@ -26,13 +26,8 @@ class Server extends Actor with ActorLogging {
     case c @ Connected(remote, local) =>
       log.info(s"Connected to $remote  $local")
       val connection = sender()
-      connection ! Register(self)
-      context become {
-        case Received(data) =>
-          log.info(s"Received ${data.utf8String}")
-          connection ! Write(data)
-        case PeerClosed     => context stop self
-      }
+      val handler    = context.actorOf(Props[Reply])
+      connection ! Register(handler)
   }
 
 }

@@ -4,16 +4,16 @@
 package client
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import scala.io.StdIn
 import akka.util.ByteString
+import client.actors.Client
 
-import actors.Client
+import scala.io.StdIn
 
 object MainClient extends App {
   val system: ActorSystem = ActorSystem("Akka-Client")
 
   try {
-    val client: ActorRef = system.actorOf(Props[Client], "client-Actor")
+    val client: ActorRef = system.actorOf(Props[Client])
     println(">>> Press ENTER to send <<<")
     var data = StdIn.readLine()
     client ! ByteString.fromString(data)
