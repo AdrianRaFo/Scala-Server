@@ -5,7 +5,7 @@ package client.actors
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 
@@ -15,7 +15,7 @@ class Client extends Actor with ActorLogging {
   import context.system
 
   IO(Tcp) ! Connect(new InetSocketAddress("localhost", 16753))
-
+  var extsender: ActorRef = _
   def receive = {
     case CommandFailed(_: Connect) =>
       log.error("connect failed")
@@ -28,9 +28,11 @@ class Client extends Actor with ActorLogging {
       context become {
         case data: ByteString =>
           println("Sending " + data.utf8String)
+          extsender = sender()
           connection ! Write(data)
         case Received(data) =>
           println("Receive " + data.utf8String)
+          extsender ! data.utf8String
         case CommandFailed(w: Write) =>
           // O/S buffer was full
           log.error(s"write failed $w")
