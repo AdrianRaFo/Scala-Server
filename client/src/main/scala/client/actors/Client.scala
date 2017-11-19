@@ -7,17 +7,12 @@ import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorLogging}
 import akka.io.{IO, Tcp}
-import akka.util.{ByteString, Timeout}
-import akka.pattern.ask
-
-import scala.concurrent.{duration, Await}
-import scala.concurrent.duration.Duration
+import akka.util.ByteString
 
 class Client extends Actor with ActorLogging {
 
   import Tcp._
   import context.system
-  implicit val timeOut: Timeout = Timeout(1, duration.MINUTES)
 
   IO(Tcp) ! Connect(new InetSocketAddress("localhost", 16753))
 
